@@ -1,0 +1,14 @@
+name: OneBlockPlugin
+version: '${project.version}'
+main: org.julapalula.oneblockplugin.core.OneBlockPlugin
+api-version: '1.21'
+load: STARTUP
+description: Test plugin
+author: JULAPALULA
+commands:
+  selectlot:
+    description: Select a lot to receive random items
+    usage: /selectlot <lote_name>
+  currentlot:
+    description: Check your currently selected lot
+    usage: /currentlote
