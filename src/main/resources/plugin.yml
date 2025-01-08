@@ -7,8 +7,6 @@ description: Test plugin
 author: JULAPALULA
 commands:
   selectlot:
-    description: Select a lot to receive random items
-    usage: /selectlot <lote_name>
-  currentlot:
-    description: Check your currently selected lot
-    usage: /currentlote
+    description: Select a lot to start receiving random items from that lot
+    usage: /selectlot <lot_name>
+
