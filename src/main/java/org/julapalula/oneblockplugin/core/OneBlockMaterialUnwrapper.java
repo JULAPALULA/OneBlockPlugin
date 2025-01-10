@@ -13,6 +13,44 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.util.List;
 
+/**
+ * A utility class for handling `.lot.json` files.
+ *
+ * <p>
+ * This class implements the `Listener` interface and provides methods to:
+ * <ul>
+ *   <li>Retrieve a list of `.lot.json` files from lot directory (located in main server directory).</li>
+ *   <li>Parse the content of `.lot.json` files into `Lot` objects.</li>
+ *   <li>Validate if materials are Minecraft registered stuff and validate score attributes of the lots.</li>
+ *   <li>Retrieve valid `Lot` objects from a .lot.json` files.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * The class ensures that:
+ * <ul>
+ *   <li>Directories are created if they do not exist.</li>
+ *   <li>Files with invalid material names or scores are omitted with appropriate logging.</li>
+ *   <li>Special characters in file names are avoided.</li>
+ * </ul>
+ * </p>
+ *
+ * <strong>Usage:</strong>
+ * <pre>
+ * OneBlockMaterialUnwrapper unwrapper = new OneBlockMaterialUnwrapper();
+ * ArrayList<Lot> lots = unwrapper.loadLods("/path/to/directory");
+ * </pre>
+ *
+ * <strong>Dependencies:</strong>
+ * <ul>
+ *   <li>{@code OneBlockFileManagerUtil}: Utility for file management operations.</li>
+ *   <li>{@code JSONParser}: Used for parsing JSON files.</li>
+ *   <li>{@code Lot}: Represents a lot with attributes like materials and score.</li>
+ *   <li>{@code Material}: Represents a material entity in the system.</li>
+ * </ul>
+ *
+ */
+
 public class OneBlockMaterialUnwrapper implements Listener {
     OneBlockFileManagerUtil fileManager = new OneBlockFileManagerUtil();
     JSONParser parser = new JSONParser();
@@ -24,15 +62,15 @@ public class OneBlockMaterialUnwrapper implements Listener {
      * @return a list of File objects representing .lot.json files
      */
 
-    protected List<File> getLotFiles(String directoryPath) {
+    private List<File> getLotFiles(String directoryPath) {
         File folder = new File(directoryPath);
 
         // Check if the folder exists
         if (!folder.exists()) {
             if (folder.mkdirs()) {
-                System.out.println("[OneBlockPlugin] lods folder created with success in "+ folder.getAbsolutePath() +".");
+                System.out.println("[OneBlockPlugin] lots folder created with success in "+ folder.getAbsolutePath() +".");
             } else {
-                System.out.println("[OneBlockPlugin] Failed to create lods directory.");
+                System.out.println("[OneBlockPlugin] Failed to create lots directory.");
                 return new ArrayList<>();
             }
         }
@@ -56,7 +94,7 @@ public class OneBlockMaterialUnwrapper implements Listener {
      * @return the parsed JSONObject, or null if parsing fails
      */
 
-    protected Lot extractLotData(File file) {
+    private Lot extractLotData(File file) {
         JSONParser parser = new JSONParser();
         try (FileReader reader = new FileReader(file)) {
             JSONObject jsonObject = (JSONObject) parser.parse(reader);
@@ -112,7 +150,7 @@ public class OneBlockMaterialUnwrapper implements Listener {
      * @param directoryPath the path to the directory
      */
 
-    protected ArrayList<Lot> loadLods(String directoryPath) {
+    public ArrayList<Lot> loadLots(String directoryPath) {
         List<File> lotFiles = getLotFiles(directoryPath);
         ArrayList<Lot> lods = new ArrayList<>();
 

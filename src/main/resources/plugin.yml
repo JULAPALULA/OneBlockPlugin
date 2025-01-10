@@ -6,7 +6,6 @@ load: STARTUP
 description: Test plugin
 author: JULAPALULA
 commands:
-  selectlot:
-    description: Select a lot to start receiving random items from that lot
-    usage: /selectlot <lot_name>
-
+  lot:
+    description: Main command for OneBlockPlugin
+    usage: /lot <subcommand> [arguments]
