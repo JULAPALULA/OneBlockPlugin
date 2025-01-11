@@ -7,17 +7,23 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.julapalula.oneblockplugin.core.OneBlockPlugin;
+import org.julapalula.oneblockplugin.playerinfo.PlayerData;
+import org.julapalula.oneblockplugin.playerinfo.PlayerManager;
+import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OneBlockCommands implements CommandExecutor {
 
-    private static final ArrayList<Lot> lodLots = new ArrayList<>();
+    private static OneBlockPlugin plugin = null;
+    private static PlayerUnwrapper playerUnwrapper =  new PlayerUnwrapper(plugin.arrayLot);
+    private static PlayerManager playerManager =  new PlayerManager();
 
-    public OneBlockCommands(ArrayList<Lot> lodLots) {
-        OneBlockCommands.lodLots.clear();  // Clear existing contents
-        OneBlockCommands.lodLots.addAll(lodLots);  // Add all elements from the input
+    public OneBlockCommands(OneBlockPlugin plugin) {
+       this.plugin = plugin; // Populate with existing lots from the plugin.
     }
 
     @Override
@@ -55,20 +61,34 @@ public class OneBlockCommands implements CommandExecutor {
             case "list":
                 lotList(player);
                 return true;
+            case "score":
+                displayPlayerScore(player);
+                return true;
+            case "pool":
+                displayPlayerPool(player);
+                return true;
+            case "buy":
+                if (args.length != 2) {
+                    player.sendMessage("[OneBlock] Usage: /lot buy <lot name>");
+                    return true;
+                }
+                buyLot(player, args[1]);
+                return true;
             case "enable":
                 if (args.length != 1) {
-                    List<String> lotNames = getLotNames(); // Fetch all lot names
+                    List<String> lotNames = getAvaibableLot(); // Fetch all lot names
                     player.sendMessage("[OneBlock] Available lots: " + String.join(", ", lotNames));
                     return true;
                 }
                 String lotName = args[0].toLowerCase();
-                break;
-
+                playerManager.addLot(player,lotName);
+                player.sendMessage("[OneBlock] Successfully added "+lotName + "to your pool of lots.");
+                return true;
             default:
                 sender.sendMessage("Ups that's not a command. Try too use /lot help for more info!");
                 return true;
         }
-        return false;
+        //return false;
     }
 
     private boolean isPlayer(CommandSender sender) {
@@ -76,7 +96,7 @@ public class OneBlockCommands implements CommandExecutor {
     }
 
     private Lot getLotData(String lotName) {
-        for (Lot lot : lodLots) {
+        for (Lot lot : plugin.arrayLot) {
             if (lot.getLotName().equalsIgnoreCase(lotName)) { // Compare ignoring case
                 return lot; // Return the matching Lot
             }
@@ -94,9 +114,43 @@ public class OneBlockCommands implements CommandExecutor {
                 "/lot show <lot name> -> Displays lot material info and chance\n" +
                 "/lot list -> Displays lot names and cost\n" +
                 "/lot enable <lot name> -> Enable lot\n" +
-                "/lot disable <lot name> -> Disable lot\n" +
+                "/lot disable <lot name> -> Disable lot\n"+
+                "/lot score -> Shows my score\n"+
+                "/lot pool -> Shows your obtained lots\n"+
                 "/lot help -> Displays this list of commands";
         player.sendMessage(helpMessage);
+    }
+
+    // ╔════════════════╗
+    // ║    lot score   ║
+    // ╚════════════════╝
+
+    private void displayPlayerScore(Player player) {
+        PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
+        player.sendMessage(player.getName() + " score: "+ pld.getScore());
+    }
+
+    // ╔════════════════╗
+    // ║    lot pool    ║
+    // ╚════════════════╝
+
+    private void displayPlayerPool(Player player) {
+        PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
+        ArrayList<Lot> _arrayLot = pld.getEnabledLots();
+        player.sendMessage("Current "+ player.getName() +" lot pool:\n");
+
+        for(Lot _lot : _arrayLot) {
+            player.sendMessage("* " + _lot.getLotName());
+        }
+    }
+
+    // ╔════════════════╗
+    // ║    lot buy     ║
+    // ╚════════════════╝
+
+    private void buyLot(Player player, String lotName) {
+        PlayerManager plm = new PlayerManager();
+            plm.addLot(player,lotName);
     }
 
     // ╔════════════════╗
@@ -125,7 +179,7 @@ public class OneBlockCommands implements CommandExecutor {
     // ╚════════════════╝
 
     private void lotList(Player player) {
-        for (Lot _lot : lodLots) {
+        for (Lot _lot :  plugin.arrayLot) {
             player.sendMessage(String.format("- %s (Chance: %d%%)", _lot.getLotName(), _lot.getScore()));
         }
     }
@@ -134,12 +188,11 @@ public class OneBlockCommands implements CommandExecutor {
     // ║    lot enable    ║
     // ╚══════════════════╝
 
-    public static ArrayList<String> getLotNames() {
-        //TODO:
-        ArrayList<String> lotNames = new ArrayList<>();
-        for (Lot lot : lodLots) {
-            lotNames.add(lot.getLotName());
+   private List<String> getAvaibableLot() {
+        List<String> lotStrList = new ArrayList<String>();
+        for (Lot lot: plugin.arrayLot) {
+            lotStrList.add(lot.getLotName());
         }
-        return lotNames;
-    }
+        return lotStrList;
+   }
 }

@@ -152,15 +152,15 @@ public class OneBlockMaterialUnwrapper implements Listener {
 
     public ArrayList<Lot> loadLots(String directoryPath) {
         List<File> lotFiles = getLotFiles(directoryPath);
-        ArrayList<Lot> lods = new ArrayList<>();
+        ArrayList<Lot> lots = new ArrayList<>();
 
         for (File file : lotFiles) {
             Lot lot = extractLotData(file);
             if (lot != null) {
-                lods.add(lot);
+                lots.add(lot);
             }
         }
-        return lods;
+        return lots;
     }
 
 }

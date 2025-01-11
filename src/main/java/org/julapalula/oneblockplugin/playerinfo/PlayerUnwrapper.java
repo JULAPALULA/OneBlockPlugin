@@ -1,5 +1,6 @@
 package org.julapalula.oneblockplugin.playerinfo;
 
+import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -27,18 +28,8 @@ public class PlayerUnwrapper {
      * @return a list of File objects representing [UUID].json files
      */
 
-    private List<File> getPlayerFiles(String directoryPath) {
+    private List<File> getPlayersFiles(String directoryPath) {
         File folder = new File(directoryPath);
-
-        // Check if the folder exists
-        if (!folder.exists()) {
-            if (folder.mkdirs()) {
-                System.out.println("[OneBlockPlugin] player_data folder created with success in "+ folder.getAbsolutePath() +".");
-            } else {
-                System.out.println("[OneBlockPlugin] Failed to create player_data directory.");
-                return new ArrayList<>();
-            }
-        }
 
         // List .lot.json files in the directory
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".json") && !fileManager.hasSpecialCharacters(fileManager.getFileNameWithoutExtension(name)));
@@ -51,6 +42,40 @@ public class PlayerUnwrapper {
             return new ArrayList<>(); // Return an empty list if no files are found
         }
     }
+
+    /**
+     * Get the list of [UUID].json file in the specified directory.
+     *
+     * @param directoryPath the path to the directory
+     * @return a list of File objects representing [UUID].json files
+     */
+
+    private File getPlayerFile(String directoryPath, String player_UUID) {
+        File folder = new File(directoryPath);
+
+        // Ensure the directory exists
+        if (!folder.exists()) {
+            if (folder.mkdirs()) {
+                System.out.println("[OneBlockPlugin] Directory created successfully at " + folder.getAbsolutePath());
+            } else {
+                System.out.println("[OneBlockPlugin] Failed to create directory at " + folder.getAbsolutePath());
+                return null;
+            }
+        }
+
+        // Define the target file based on the player's UUID
+        File targetFile = new File(folder, player_UUID + ".json");
+
+        // Check if the file exists
+        if (targetFile.exists()) {
+            System.out.println("[OneBlockPlugin] Player data file found: " + targetFile.getAbsolutePath());
+            return targetFile;
+        } else {
+            System.out.println("[OneBlockPlugin] No data file found for player UUID: " + player_UUID);
+            return null;
+        }
+    }
+
 
      /**
      * Extract the JSON content from a given file.
@@ -154,7 +179,7 @@ public class PlayerUnwrapper {
      */
 
     public ArrayList<PlayerData> loadPlayerData(String directoryPath) {
-        List<File> filePlayer = getPlayerFiles(directoryPath);
+        List<File> filePlayer = getPlayersFiles(directoryPath);
         ArrayList<PlayerData> playerArray = new ArrayList<>();
 
         for (File file : filePlayer) {
@@ -170,13 +195,14 @@ public class PlayerUnwrapper {
      * @param player_UUID the name of the file without extension
      */
 
-    public PlayerData loadSinglePlayerData(String player_UUID) {
-        String directoryPath = "one_block_data/player_data/"+player_UUID;
-        List<File> filePlayer = getPlayerFiles(directoryPath);
+    public PlayerData loadSinglePlayerData(UUID player_UUID) {
+        String directoryPath = "one_block_data/player_data/";
+        File filePlayer = getPlayerFile(directoryPath,
+                                         player_UUID.toString());
 
-        if(filePlayer.isEmpty()) { return null;}
+        if(filePlayer == null) { return null;}
 
-        PlayerData playerdata = extractPlayerData(filePlayer.get(0));
-        return playerdata;
+        return extractPlayerData(filePlayer);
     }
+
 }
