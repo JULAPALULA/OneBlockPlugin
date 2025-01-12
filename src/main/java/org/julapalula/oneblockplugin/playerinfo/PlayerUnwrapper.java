@@ -15,11 +15,13 @@ import java.util.*;
 public class PlayerUnwrapper {
     OneBlockFileManagerUtil fileManager = new OneBlockFileManagerUtil();
     JSONParser parser = new JSONParser();
-    private static ArrayList<Lot> arrayLot = new ArrayList<Lot>();
+    private static ArrayList<Lot> server_lot_array = new ArrayList<Lot>();
 
-    public PlayerUnwrapper(ArrayList<Lot> arrayLot ) {
-        this.arrayLot = arrayLot;
+    public PlayerUnwrapper(ArrayList<Lot> server_lot_array ) {
+        this.server_lot_array = server_lot_array;
     }
+
+    public PlayerUnwrapper() {}
 
      /**
      * Get the list of [UUID].json files in the specified directory.
@@ -93,30 +95,38 @@ public class PlayerUnwrapper {
 
             // --- Extract data to player_data
 
-            //Extract UUID
+            // --- Extract UUID and set
             player_data.setUUID(fileManager.getFileNameWithoutExtension(file.getName()));
 
-            //Extract Score
+            // --- Extract Score
             int playerScore = ((Long) jsonObject.get("score")).intValue();
+
+            // --- Set score
             player_data.setScore(playerScore);
 
-            //Extract lotNames
+            //--- Extract enabled lotNames
             List<String> lotsEnabledNames = (List<String>) jsonObject.get("enabled_lots");
 
-            //If is a new player or doesn't have any lots
+            //If is a new player or doesn't have any enabled lots
             if(lotsEnabledNames.isEmpty()) {
                 player_data.setEnabledLots(null);
-                return player_data;
             }
 
-            //gets the player lot data
-            ArrayList<Lot> player_enabled_lots = returnPlayerLots(lotsEnabledNames, player_data.getUUID());
+            // --- Gets the player lot data
+            ArrayList<Lot> player_enabled_lots = returnJSONLotsArray(lotsEnabledNames, player_data.getUUID());
+
             if(player_enabled_lots == null) {
                 System.out.println("[OneBlockPlugin] Error in player's data UUID " + player_data.getUUID() + ". Has encountered mismatched or bad written lots.");
             }else {
                 player_data.setEnabledLots(player_enabled_lots);
             }
 
+            // --- Extract pool lots name
+            List<String> lotsNames = (List<String>) jsonObject.get("lot_pool");
+
+            // --- Gets the player lot data
+            ArrayList<Lot> player_pool_lots = returnJSONLotsArray(lotsNames, player_data.getUUID());
+            player_data.setLotPool(player_pool_lots);
         } catch (IOException e) {
             System.err.println("Failed to read file: " + file.getName());
             e.printStackTrace();
@@ -134,11 +144,11 @@ public class PlayerUnwrapper {
     * @return ArrayList<Lot> if all names in listLots are registered in the system, otherwise returns null
     */
 
-    private ArrayList<Lot> returnPlayerLots(List<String> listLots, String playerID) {
+    private ArrayList<Lot> returnJSONLotsArray(List<String> listLots, String playerID) {
 
         // Create a set of valid lot names for quick lookup
         Set<String> validLotNames = new HashSet<>();
-        for (Lot lot : arrayLot) {
+        for (Lot lot : server_lot_array) {
             validLotNames.add(lot.getLotName().toLowerCase().trim());
         }
 
@@ -151,7 +161,7 @@ public class PlayerUnwrapper {
             String normalizedLotName = lotName.toLowerCase().trim();
             if (validLotNames.contains(normalizedLotName)) {
                 // Find the corresponding Lot object and add to the matched list
-                for (Lot lot : arrayLot) {
+                for (Lot lot : server_lot_array) {
                     if (lot.getLotName().toLowerCase().trim().equals(normalizedLotName)) {
                         matchedLots.add(lot);
                         break;

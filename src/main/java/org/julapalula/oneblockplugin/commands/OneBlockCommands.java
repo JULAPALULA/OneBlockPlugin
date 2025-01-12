@@ -1,5 +1,6 @@
 package org.julapalula.oneblockplugin.commands;
 import org.bukkit.Material;
+import org.checkerframework.checker.units.qual.A;
 import org.julapalula.oneblockplugin.core.Lot;
 
 import org.bukkit.command.Command;
@@ -81,7 +82,7 @@ public class OneBlockCommands implements CommandExecutor {
                     return true;
                 }
                 String lotName = args[0].toLowerCase();
-                playerManager.addLot(player,lotName);
+                playerManager.addLotEnabled(player,lotName);
                 player.sendMessage("[OneBlock] Successfully added "+lotName + "to your pool of lots.");
                 return true;
             default:
@@ -115,6 +116,7 @@ public class OneBlockCommands implements CommandExecutor {
                 "/lot list -> Displays lot names and cost\n" +
                 "/lot enable <lot name> -> Enable lot\n" +
                 "/lot disable <lot name> -> Disable lot\n"+
+                "/lot buy <lot name> -> Buy a lot\n"+
                 "/lot score -> Shows my score\n"+
                 "/lot pool -> Shows your obtained lots\n"+
                 "/lot help -> Displays this list of commands";
@@ -136,7 +138,12 @@ public class OneBlockCommands implements CommandExecutor {
 
     private void displayPlayerPool(Player player) {
         PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
-        ArrayList<Lot> _arrayLot = pld.getEnabledLots();
+        ArrayList<Lot> _arrayLot = pld.getLotPool();
+
+        if(_arrayLot.isEmpty()) {
+            player.sendMessage("No registered lots for this player"+ player.getName() +" lot pool:\n");
+        }
+
         player.sendMessage("Current "+ player.getName() +" lot pool:\n");
 
         for(Lot _lot : _arrayLot) {
@@ -148,9 +155,72 @@ public class OneBlockCommands implements CommandExecutor {
     // ║    lot buy     ║
     // ╚════════════════╝
 
+    private boolean isLotNameInServer(String lotName) {
+        ArrayList<Lot> server_lot_pool = plugin.arrayLot;
+        boolean isLotNameReal = false;
+        for(Lot _lot: server_lot_pool) {
+            if(_lot.getLotName().equalsIgnoreCase(lotName)) {
+                isLotNameReal = true;
+                break;
+            }
+        }
+        return isLotNameReal;
+    }
+
+    private boolean isLotAlreadyBought(Player player, String lotName) {
+        PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
+        boolean isLotBought = false;
+
+        ArrayList<Lot> player_lot_pool = pld.getLotPool();
+        for(Lot _lot: player_lot_pool) {
+            if(_lot.getLotName().equalsIgnoreCase(lotName)) {
+                isLotBought = true;
+                break;
+            }
+        }
+        return isLotBought;
+    }
+    private boolean canBuyIt(Player player, String lotName) {
+        ArrayList<Lot> server_lot_pool = plugin.arrayLot;
+        int lot_score = 0;
+        for(Lot _lot: server_lot_pool) {
+            if(_lot.getLotName().equalsIgnoreCase(lotName)) {
+                lot_score = _lot.getScore();
+                break;
+            }
+        }
+
+        PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
+        int score = pld.getScore();
+
+        if(score >= lot_score) {
+            playerManager.rewritePlayerScore(player, score-lot_score);
+            return true;
+        }else {
+            return false;
+        }
+    }
     private void buyLot(Player player, String lotName) {
-        PlayerManager plm = new PlayerManager();
-            plm.addLot(player,lotName);
+         /*
+         * 1. Exists that lot in server?
+         * 1. Check if that lot is already bought
+         * 2. Can afford it?
+         */
+        if(!isLotNameInServer(lotName)) {
+            player.sendMessage("[OneBlock] No matching lot name with any on server list try /lot list to ensure if exists.");
+            return;
+        }
+        if(isLotAlreadyBought(player, lotName)) {
+            player.sendMessage("[OneBlock] Lot "+ lotName+ " is already bought!");
+            return;
+        }
+        if(!canBuyIt(player, lotName)) {
+            player.sendMessage("[OneBlock] Can't buy "+ lotName+ ".");
+            return;
+        }
+        playerManager.addLotPool(player,lotName);
+        player.sendMessage("[OneBlock] Successfully bought "+ lotName+ "!");
+
     }
 
     // ╔════════════════╗

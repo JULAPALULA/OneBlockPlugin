@@ -29,7 +29,8 @@ public class PlayerManager {
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{\n");
         jsonBuilder.append("  \"score\": 0,\n");
-        jsonBuilder.append("  \"enabled_lots\": []\n");
+        jsonBuilder.append("  \"enabled_lots\": [],\n");
+        jsonBuilder.append("  \"lot_pool\": []\n");
         jsonBuilder.append("}");
 
         // Write the JSON string to the file
@@ -96,20 +97,32 @@ public class PlayerManager {
         }
     }
 
-    // --- Add a lot to the player's enabled lots
-    public void addLot(Player player, String lotName) {
-        modifyLot(player, lotName, true);
+    // --- Add a lot to the player's pool lots
+    public void addLotPool(Player player, String lotName) {
+        modifyLot(player, lotName, true, true);
     }
 
-    // --- Remove a lot from the player's enabled lots
-    public void removeLot(Player player, String lotName) {
-        modifyLot(player, lotName, false);
+    // --- Remove a lot from the player's pool lots
+    public void removeLotPool(Player player, String lotName) {
+        modifyLot(player, lotName, false, true);
     }
+
+    // --- Add a lot to the player's enabled lots
+    public void addLotEnabled(Player player, String lotName) {
+        modifyLot(player, lotName, true, false);
+    }
+
+    // --- Remove a lot to the player's enabled lots
+    public void removeLotEnabled(Player player, String lotName) {
+        modifyLot(player, lotName, true, false);
+    }
+
 
     // --- Internal method to modify the player's enabled lots
-    private void modifyLot(Player player, String lotName, boolean add) {
+    private void modifyLot(Player player, String lotName, boolean add, boolean isToPool) {
         String dir = "one_block_data/player_data";
         UUID playerUUID = player.getUniqueId();
+
         File playerFile = new File(dir, playerUUID + ".json");
 
         if (!playerFile.exists()) {
@@ -124,18 +137,21 @@ public class PlayerManager {
                 playerData = JsonParser.parseReader(reader).getAsJsonObject();
             }
 
-            // Get the "enabled_lots" array
-            JsonArray enabledLots = playerData.getAsJsonArray("enabled_lots");
-            if (enabledLots == null) {
-                enabledLots = new JsonArray();
-                playerData.add("enabled_lots", enabledLots);
+            // Get the "enabled_lots" or "lot_pool" array
+            String json_aim = isToPool ? "lot_pool" : "enabled_lots";
+
+            JsonArray JSONLotArray = playerData.getAsJsonArray(json_aim);
+
+            if (JSONLotArray == null) {
+                JSONLotArray = new JsonArray();
+                playerData.add(json_aim, JSONLotArray);
             }
 
             if (add) {
                 // Add the lot if it's not already in the list
                 JsonElement lotNameElement = new JsonParser().parse(lotName);
-                if (!enabledLots.contains(lotNameElement)) {
-                    enabledLots.add(lotName);
+                if (!JSONLotArray.contains(lotNameElement)) {
+                    JSONLotArray.add(lotName);
                     System.out.println("[OneBlockPlugin] Lot " + lotName + " added for player " + player.getName());
                 } else {
                     System.out.println("[OneBlockPlugin] Lot " + lotName + " is already enabled for player " + player.getName());
@@ -143,9 +159,9 @@ public class PlayerManager {
             } else {
                 // Remove the lot if it exists in the list
                 boolean removed = false;
-                for (int i = 0; i < enabledLots.size(); i++) {
-                    if (enabledLots.get(i).getAsString().equals(lotName)) {
-                        enabledLots.remove(i);
+                for (int i = 0; i < JSONLotArray.size(); i++) {
+                    if (JSONLotArray.get(i).getAsString().equals(lotName)) {
+                        JSONLotArray.remove(i);
                         removed = true;
                         break;
                     }
