@@ -1,4 +1,5 @@
 package org.julapalula.oneblockplugin.commands;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.checkerframework.checker.units.qual.A;
 import org.julapalula.oneblockplugin.core.Lot;
@@ -60,7 +61,12 @@ public class OneBlockCommands implements CommandExecutor {
                 lotShow(player, args[1]);
                 return true;
             case "list":
-                lotList(player);
+                if (args.length > 1 && args[1].equals("enabled")) {
+                    // Execute when the command is `/lot list enabled`
+                    playerEnabledList(player);
+                }else {
+                    lotList(player);
+                }
                 return true;
             case "score":
                 displayPlayerScore(player);
@@ -74,16 +80,23 @@ public class OneBlockCommands implements CommandExecutor {
                     return true;
                 }
                 buyLot(player, args[1]);
+                player.sendMessage("[OneBlock] Successfully bought "+ args[1] + " lot.");
                 return true;
             case "enable":
-                if (args.length != 1) {
-                    List<String> lotNames = getAvaibableLot(); // Fetch all lot names
-                    player.sendMessage("[OneBlock] Available lots: " + String.join(", ", lotNames));
+                if (args.length != 2) {
+                    player.sendMessage("[OneBlock] Usage: /lot enabled <lot name>, use /lot pool to see your available lots");
                     return true;
                 }
-                String lotName = args[0].toLowerCase();
-                playerManager.addLotEnabled(player,lotName);
-                player.sendMessage("[OneBlock] Successfully added "+lotName + "to your pool of lots.");
+                String lotName = args[1].toLowerCase();
+                lotEnable(player, lotName);
+                return true;
+            case "disable":
+                if (args.length != 2) {
+                    player.sendMessage("[OneBlock] Usage: /lot disable <lot name>, use /lot list enabled to see your available lots");
+                    return true;
+                }
+                String lotEnableName = args[1].toLowerCase();
+                lotDisable(player, lotEnableName);
                 return true;
             default:
                 sender.sendMessage("Ups that's not a command. Try too use /lot help for more info!");
@@ -129,7 +142,7 @@ public class OneBlockCommands implements CommandExecutor {
 
     private void displayPlayerScore(Player player) {
         PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
-        player.sendMessage(player.getName() + " score: "+ pld.getScore());
+        player.sendMessage(ChatColor.GREEN + "Current : " + player.getName() + " score:" + ChatColor.YELLOW +  pld.getScore());
     }
 
     // ╔════════════════╗
@@ -166,7 +179,6 @@ public class OneBlockCommands implements CommandExecutor {
         }
         return isLotNameReal;
     }
-
     private boolean isLotAlreadyBought(Player player, String lotName) {
         PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
         boolean isLotBought = false;
@@ -250,7 +262,21 @@ public class OneBlockCommands implements CommandExecutor {
 
     private void lotList(Player player) {
         for (Lot _lot :  plugin.arrayLot) {
-            player.sendMessage(String.format("- %s (Chance: %d%%)", _lot.getLotName(), _lot.getScore()));
+            player.sendMessage(String.format("- %s (Score: %d%%)", _lot.getLotName(), _lot.getScore()));
+        }
+    }
+
+    private void playerEnabledList(Player player){
+        PlayerData pld = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
+        ArrayList<Lot> enabled_lot_array = pld.getEnabledLots();
+        if(enabled_lot_array.isEmpty()) {
+            player.sendMessage("No enabled lots are active!");
+            return;
+        }
+        player.sendMessage("Current enabled lot list:");
+
+        for(Lot _lot: enabled_lot_array) {
+            player.sendMessage(String.format("- %s",_lot.getLotName()));
         }
     }
 
@@ -258,11 +284,68 @@ public class OneBlockCommands implements CommandExecutor {
     // ║    lot enable    ║
     // ╚══════════════════╝
 
-   private List<String> getAvaibableLot() {
-        List<String> lotStrList = new ArrayList<String>();
-        for (Lot lot: plugin.arrayLot) {
-            lotStrList.add(lot.getLotName());
+   private void lotEnable(Player player, String lotName) {
+       /*
+        * 1. Checks if that lot name is in our pool
+        * 2. Checks if that lot name is already enabled
+        * 3. Enable it!
+        */
+        if(!checkLotInPlayerPool(player, lotName)) {
+            player.sendMessage("[OneBlock] Lot "+ lotName+ " is not in your pool!");
+            return;
         }
-        return lotStrList;
+        if(checkLotIsAlreadyEnabled(player, lotName)) {
+            player.sendMessage("[OneBlock] Lot "+ lotName+ " is already enabled!");
+            return;
+        }
+        playerManager.addLotEnabled(player, lotName);
+        player.sendMessage("[OneBlock] Enabled lot: "+ lotName);
+
    }
+   private boolean checkLotInPlayerPool(Player player,String lotName) {
+        PlayerData pd = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
+       ArrayList<Lot> player_lot_pool = pd.getLotPool();
+       boolean isLotInPool = false;
+
+       for(Lot _lot: player_lot_pool) {
+           if(_lot.getLotName().equalsIgnoreCase(lotName)) {
+               isLotInPool = true;
+               break;
+           }
+       }
+       return isLotInPool;
+   }
+   private boolean checkLotIsAlreadyEnabled(Player player,String lotName) {
+        PlayerData pd = playerUnwrapper.loadSinglePlayerData(player.getUniqueId());
+        ArrayList<Lot> player_lot_enabled = pd.getEnabledLots();
+        boolean isLotEnabled = false;
+
+        for(Lot _lot: player_lot_enabled) {
+            if(_lot.getLotName().equalsIgnoreCase(lotName)) {
+                isLotEnabled = true;
+                break;
+            }
+        }
+        return isLotEnabled;
+    }
+
+    // ╔══════════════════╗
+    // ║    lot disable   ║
+    // ╚══════════════════╝
+
+    private void lotDisable(Player player, String lotName) {
+         /*
+         * 1. Checks if that lot name is in our enabled pool
+         * 2. Disable it!
+         */
+
+        if(!checkLotIsAlreadyEnabled(player, lotName)) {
+            player.sendMessage("[OneBlock] Lot "+ lotName+ " is already disabled.");
+            return;
+        }
+
+        playerManager.removeLotEnabled(player, lotName);
+        player.sendMessage("[OneBlock] Disabled lot: "+ lotName);
+
+    }
 }

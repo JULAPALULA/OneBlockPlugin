@@ -35,8 +35,7 @@ public class OneBlockListeners implements Listener {
         current_player_score++;
         player_manager.rewritePlayerScore(player, current_player_score);
         // Notify the player with color
-        player.sendMessage(ChatColor.GREEN + "You placed a block! Your score is now: "
-                + ChatColor.YELLOW + current_player_score);
+
     }
 
     private void createPlayerData(Player player) {

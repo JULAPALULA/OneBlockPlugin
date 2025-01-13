@@ -114,7 +114,7 @@ public class PlayerManager {
 
     // --- Remove a lot to the player's enabled lots
     public void removeLotEnabled(Player player, String lotName) {
-        modifyLot(player, lotName, true, false);
+        modifyLot(player, lotName, false, false);
     }
 
 
