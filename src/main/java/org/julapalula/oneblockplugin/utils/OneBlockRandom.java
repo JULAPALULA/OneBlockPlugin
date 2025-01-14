@@ -13,6 +13,13 @@ public class OneBlockRandom {
     private int mti = N + 1;             // mti == N+1 means mt[N] is not initialized
 
     // Constructor to initialize with a seed
+    public OneBlockRandom() {
+        mt[0] = 5489;
+        for (mti = 1; mti < N; mti++) {
+            mt[mti] = (1812433253 * (mt[mti - 1] ^ (mt[mti - 1] >>> 30)) + mti);
+            mt[mti] &= 0xffffffff; // Ensure it's a 32-bit integer
+        }
+    }
     public OneBlockRandom(int seed) {
         mt[0] = seed;
         for (mti = 1; mti < N; mti++) {

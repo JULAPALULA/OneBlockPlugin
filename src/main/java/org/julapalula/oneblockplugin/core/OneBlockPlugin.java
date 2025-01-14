@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 
 public final class OneBlockPlugin extends JavaPlugin {
     private final Logger logger = getLogger();
-
     public static ArrayList<Lot> arrayLot = new ArrayList<Lot>();
+    public static OneBlockTask oneBlockTask = null;
 
     @Override
     public void onEnable() {
@@ -36,7 +36,6 @@ public final class OneBlockPlugin extends JavaPlugin {
             logger.info("Lot "+ lot.getLotName() +" successfully loaded.");
         }
 
-        //TODO: Here should be the task
         loadCommands();
         registerListeners();
     }
@@ -45,16 +44,16 @@ public final class OneBlockPlugin extends JavaPlugin {
     public void onDisable() {
         logger.info("OneBlock Plugin (JULAPALULA) has been Disabled!");
     }
-
     private void loadCommands() {
         getCommand("lot").setExecutor(new OneBlockCommands(this));
     }
-
     private void registerListeners() {
-       getServer().getPluginManager().registerEvents(new OneBlockListeners(), this);
+       getServer().getPluginManager().registerEvents(new OneBlockListeners(this), this);
     }
+    private void sendServerLog(String msg) {logger.info(msg);}
 
-    private void sendServerLog(String msg) {
-        logger.info(msg);
-    }
+    /* Getters and setters */
+    public void setOneBlockTask(OneBlockTask oneBlockTask) {this.oneBlockTask = oneBlockTask;}
+    public  OneBlockTask getOneBlockTask() {return this.oneBlockTask;}
+
 }

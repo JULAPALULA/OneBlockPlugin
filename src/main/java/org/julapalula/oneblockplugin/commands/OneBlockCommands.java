@@ -10,11 +10,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.julapalula.oneblockplugin.core.OneBlockPlugin;
+import org.julapalula.oneblockplugin.core.OneBlockTask;
 import org.julapalula.oneblockplugin.playerinfo.PlayerData;
 import org.julapalula.oneblockplugin.playerinfo.PlayerManager;
 import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
-
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +88,7 @@ public class OneBlockCommands implements CommandExecutor {
                 }
                 String lotName = args[1].toLowerCase();
                 lotEnable(player, lotName);
+
                 return true;
             case "disable":
                 if (args.length != 2) {
@@ -347,5 +347,9 @@ public class OneBlockCommands implements CommandExecutor {
         playerManager.removeLotEnabled(player, lotName);
         player.sendMessage("[OneBlock] Disabled lot: "+ lotName);
 
+    }
+    // **** Other methods
+    private void resetTask(Player player) {
+        //TODO
     }
 }
