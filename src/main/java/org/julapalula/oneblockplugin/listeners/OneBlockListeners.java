@@ -18,8 +18,8 @@ import java.util.UUID;
 
 public class OneBlockListeners implements Listener {
     private final PlayerManager player_manager = new PlayerManager();
-    private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper();
     private OneBlockPlugin oneBlockPlugin = null;
+    private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(oneBlockPlugin);
 
     public OneBlockListeners(OneBlockPlugin oneBlockPlugin) {
         this.oneBlockPlugin = oneBlockPlugin;

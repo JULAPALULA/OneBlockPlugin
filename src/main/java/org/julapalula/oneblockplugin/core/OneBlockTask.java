@@ -16,7 +16,7 @@ public class OneBlockTask {
     private final OneBlockRandom random = new OneBlockRandom(5489); //54
     private BukkitRunnable task;
     private Player player = null;
-    private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper();
+    private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(plugin);
 
     // Constructor to initialize with the plugin instance
     public OneBlockTask(OneBlockPlugin plugin, Player player) {

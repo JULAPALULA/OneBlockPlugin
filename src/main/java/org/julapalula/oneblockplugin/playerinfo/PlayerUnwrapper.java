@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.julapalula.oneblockplugin.core.Lot;
+import org.julapalula.oneblockplugin.core.OneBlockPlugin;
 import org.julapalula.oneblockplugin.utils.OneBlockFileManagerUtil;
 
 import java.io.File;
@@ -15,13 +16,11 @@ import java.util.*;
 public class PlayerUnwrapper {
     OneBlockFileManagerUtil fileManager = new OneBlockFileManagerUtil();
     JSONParser parser = new JSONParser();
-    private static ArrayList<Lot> server_lot_array = new ArrayList<Lot>();
+    OneBlockPlugin plugin = null;
 
-    public PlayerUnwrapper(ArrayList<Lot> server_lot_array ) {
-        this.server_lot_array = server_lot_array;
+    public PlayerUnwrapper(OneBlockPlugin plugin) {
+        this.plugin = plugin;
     }
-
-    public PlayerUnwrapper() {}
 
      /**
      * Get the list of [UUID].json files in the specified directory.
@@ -116,7 +115,8 @@ public class PlayerUnwrapper {
             ArrayList<Lot> player_enabled_lots = returnJSONLotsArray(lotsEnabledNames, player_data.getUUID());
 
             if(player_enabled_lots == null) {
-                System.out.println("[OneBlockPlugin] Error in player's data UUID " + player_data.getUUID() + ". Has encountered mismatched or bad written lots.");
+                System.out.println("[OneBlockPlugin] Error in player's data UUID " + player_data.getUUID() + ". Has encountered mismatched or bad written enabled lots.");
+                player_data.setEnabledLots(new ArrayList<Lot>());
             }else {
                 player_data.setEnabledLots(player_enabled_lots);
             }
@@ -126,7 +126,12 @@ public class PlayerUnwrapper {
 
             // --- Gets the player lot data
             ArrayList<Lot> player_pool_lots = returnJSONLotsArray(lotsNames, player_data.getUUID());
-            player_data.setLotPool(player_pool_lots);
+
+            if (player_pool_lots != null) {
+                player_data.setLotPool(player_pool_lots);
+            } else {
+                player_data.setLotPool(new ArrayList<Lot>());
+            }
         } catch (IOException e) {
             System.err.println("Failed to read file: " + file.getName());
             e.printStackTrace();
@@ -145,10 +150,9 @@ public class PlayerUnwrapper {
     */
 
     private ArrayList<Lot> returnJSONLotsArray(List<String> listLots, String playerID) {
-
         // Create a set of valid lot names for quick lookup
         Set<String> validLotNames = new HashSet<>();
-        for (Lot lot : server_lot_array) {
+        for (Lot lot : plugin.arrayLot) {
             validLotNames.add(lot.getLotName().toLowerCase().trim());
         }
 
@@ -161,7 +165,7 @@ public class PlayerUnwrapper {
             String normalizedLotName = lotName.toLowerCase().trim();
             if (validLotNames.contains(normalizedLotName)) {
                 // Find the corresponding Lot object and add to the matched list
-                for (Lot lot : server_lot_array) {
+                for (Lot lot : plugin.arrayLot) {
                     if (lot.getLotName().toLowerCase().trim().equals(normalizedLotName)) {
                         matchedLots.add(lot);
                         break;
@@ -182,6 +186,7 @@ public class PlayerUnwrapper {
         return matchedLots;
     }
 
+
     /**
      * Load all player data stored in .json files from a directory and parse their contents.
      *
@@ -201,7 +206,6 @@ public class PlayerUnwrapper {
 
     /**
      * Load a single player data stored in .json files from a directory and parse their contents.
-     *
      * @param player_UUID the name of the file without extension
      */
 
