@@ -12,10 +12,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
+/**
+ * Manages player-specific data for the OneBlockPlugin.
+ *
+ * <p>
+ * This class provides methods to:
+ * <ul>
+ *   <li>Create and manage player data files.</li>
+ *   <li>Modify player scores.</li>
+ *   <li>Add or remove lots in the player's enabled or pool lists.</li>
+ *   <li>Check for the existence of player data files.</li>
+ * </ul>
+ * </p>
+ *
+ * <strong>Usage:</strong>
+ * <pre>
+ * PlayerManager manager = new PlayerManager();
+ * manager.createPlayerData(player);
+ * manager.addLotEnabled(player, "exampleLot");
+ * </pre>
+ *
+ * <strong>Dependencies:</strong>
+ * <ul>
+ *   <li>{@code Player}: Represents a player in the Bukkit API.</li>
+ *   <li>{@code JsonObject}, {@code JsonArray}: Used for managing JSON player data.</li>
+ * </ul>
+ */
 public class PlayerManager {
 
-    // --- Player Writting management methods
+    /**
+     * Creates a new JSON file to store data for a player.
+     *
+     * @param player the player for whom the data is being created
+     */
+
     public void createPlayerData(Player player) {
 
         // Define the directory for player data
@@ -42,7 +72,12 @@ public class PlayerManager {
         }
     }
 
-    // --- Ensure that the Player's directory is ok
+    /**
+     * Ensures that the directory for player data exists.
+     *
+     * @param dir the directory path
+     */
+
     private void ensurePlayerDirectoryCreated(String dir) {
         // Ensure the directory exists
         File directory = new File(dir);
@@ -56,7 +91,13 @@ public class PlayerManager {
         }
     }
 
-    // --- Method to check if the player file exists based on the player's UUID
+    /**
+     * Checks if a data file exists for the given player.
+     *
+     * @param player the player to check
+     * @return true if the data file exists, false otherwise
+     */
+
     public boolean doesPlayerDataExist(Player player) {
         String dir = "one_block_data/player_data";
         UUID playerUUID = player.getUniqueId(); // Get the player's UUID
@@ -66,7 +107,13 @@ public class PlayerManager {
         return playerFile.exists();
     }
 
-    // --- Method to rewrite the player's score
+    /**
+     * Updates the player's score in their data file.
+     *
+     * @param player   the player whose score is being updated
+     * @param newScore the new score to set
+     */
+
     public void rewritePlayerScore(Player player, int newScore) {
         String dir = "one_block_data/player_data";
         UUID playerUUID = player.getUniqueId();
@@ -97,28 +144,55 @@ public class PlayerManager {
         }
     }
 
-    // --- Add a lot to the player's pool lots
+    /**
+     * Adds a lot to the player's lot pool.
+     *
+     * @param player  the player whose lot pool is being updated
+     * @param lotName the name of the lot to add
+     */
     public void addLotPool(Player player, String lotName) {
         modifyLot(player, lotName, true, true);
     }
 
-    // --- Remove a lot from the player's pool lots
+    /**
+     * Removes a lot from the player's lot pool.
+     *
+     * @param player  the player whose lot pool is being updated
+     * @param lotName the name of the lot to remove
+     */
     public void removeLotPool(Player player, String lotName) {
         modifyLot(player, lotName, false, true);
     }
 
-    // --- Add a lot to the player's enabled lots
+    /**
+     * Adds a lot to the player's enabled lots.
+     *
+     * @param player  the player whose enabled lots are being updated
+     * @param lotName the name of the lot to add
+     */
     public void addLotEnabled(Player player, String lotName) {
         modifyLot(player, lotName, true, false);
     }
 
-    // --- Remove a lot to the player's enabled lots
+    /**
+     * Removes a lot from the player's enabled lots.
+     *
+     * @param player  the player whose enabled lots are being updated
+     * @param lotName the name of the lot to remove
+     */
     public void removeLotEnabled(Player player, String lotName) {
         modifyLot(player, lotName, false, false);
     }
 
 
-    // --- Internal method to modify the player's enabled lots
+    /**
+     * Modifies a player's lot pool or enabled lots.
+     *
+     * @param player   the player whose data is being modified
+     * @param lotName  the name of the lot to modify
+     * @param add      true to add the lot, false to remove it
+     * @param isToPool true if modifying the lot pool, false for enabled lots
+     */
     private void modifyLot(Player player, String lotName, boolean add, boolean isToPool) {
         String dir = "one_block_data/player_data";
         UUID playerUUID = player.getUniqueId();

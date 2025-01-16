@@ -19,7 +19,7 @@ public class PlayerUnwrapper {
     OneBlockPlugin plugin = null;
 
     public PlayerUnwrapper(OneBlockPlugin plugin) {
-        this.plugin = plugin;
+        this.plugin = plugin; //TODO: Pasar la arraylist (plugin)
     }
 
      /**

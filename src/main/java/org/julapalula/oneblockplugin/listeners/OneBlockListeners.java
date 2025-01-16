@@ -48,15 +48,6 @@ public class OneBlockListeners implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayer(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        // Handle player quit event
-        if(hasPlayerEnabledLots(player)) {
-            OneBlockTask obt = new OneBlockTask(oneBlockPlugin, player);
-            obt.stopTask();
-        }
-    }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {

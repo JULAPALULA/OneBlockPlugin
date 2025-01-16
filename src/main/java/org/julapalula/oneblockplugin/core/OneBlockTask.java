@@ -10,7 +10,34 @@ import org.julapalula.oneblockplugin.utils.OneBlockRandom;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Manages periodic tasks for the OneBlockPlugin, such as giving random items to players.
+ *
+ * <p>
+ * This class provides methods to:
+ * <ul>
+ *   <li>Start a scheduled task to give random items to a player.</li>
+ *   <li>Stop the scheduled task.</li>
+ *   <li>Determine and distribute random items based on enabled lots.</li>
+ * </ul>
+ * </p>
+ *
+ * <strong>Usage:</strong>
+ * <pre>
+ * OneBlockTask task = new OneBlockTask(plugin, player);
+ * task.startTask();
+ * task.stopTask();
+ * </pre>
+ *
+ * <strong>Dependencies:</strong>
+ * <ul>
+ *   <li>{@code PlayerData}: Contains player-specific data including enabled lots.</li>
+ *   <li>{@code PlayerUnwrapper}: Utility for loading player data.</li>
+ *   <li>{@code OneBlockRandom}: Utility for generating random numbers.</li>
+ *   <li>{@code BukkitRunnable}: Used for scheduling tasks in the Bukkit environment.</li>
+ *   <li>{@code Lot}: Represents a lot with attributes such as materials.</li>
+ * </ul>
+ */
 public class OneBlockTask {
     private OneBlockPlugin plugin = null;
     private final OneBlockRandom random = new OneBlockRandom(5489); //54
@@ -18,13 +45,24 @@ public class OneBlockTask {
     private Player player = null;
     private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(plugin);
 
-    // Constructor to initialize with the plugin instance
+    /**
+     * Constructs a OneBlockTask instance.
+     *
+     * @param plugin the instance of OneBlockPlugin
+     * @param player the player for whom the task is being managed
+     */
     public OneBlockTask(OneBlockPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
     }
 
-    // Start the task to give random items
+    /**
+     * Starts a scheduled task to give random items to the player every 10 seconds.
+     *
+     * <p>
+     * If the task is already running, it will not start a new instance.
+     * </p>
+     */
     public void startTask() {
         if (task != null) {
             plugin.getLogger().info("Task is already running.");
@@ -38,11 +76,18 @@ public class OneBlockTask {
             }
         };
 
-        task.runTaskTimer(plugin, 200, 200); // 200 ticks = 10 seconds
+        task.runTaskTimer(plugin, 1200, 1200); // 1200 ticks = 1 minute
         plugin.getLogger().info("Task started!");
     }
 
-    // Stop the task
+    /**
+     * Stops the scheduled task if it is running.
+     *
+     * <p>
+     * If no task is running, an appropriate message is logged.
+     * </p>
+     */
+
     public void stopTask() {
         if (task != null) {
             task.cancel();
@@ -53,7 +98,17 @@ public class OneBlockTask {
         }
     }
 
-    // Method to give a random item to a player
+    /**
+     * Gives a random item to the specified player based on their enabled lots.
+     *
+     * <p>
+     * The method ensures that the player has enabled lots and valid materials to receive items from.
+     * If no enabled lots or valid materials are found, an appropriate message is sent to the player.
+     * </p>
+     *
+     * @param player the player to receive the random item
+     */
+
     private void giveRandomItem(Player player) {
         //Take the player data
         PlayerData pld = player_unwrapper.loadSinglePlayerData(player.getUniqueId());

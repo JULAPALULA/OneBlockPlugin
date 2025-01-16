@@ -50,7 +50,6 @@ public final class OneBlockPlugin extends JavaPlugin {
     private void registerListeners() {
        getServer().getPluginManager().registerEvents(new OneBlockListeners(this), this);
     }
-    private void sendServerLog(String msg) {logger.info(msg);}
 
     /* Getters and setters */
     public void setOneBlockTask(OneBlockTask oneBlockTask) {this.oneBlockTask = oneBlockTask;}

@@ -1,34 +1,77 @@
 package org.julapalula.oneblockplugin.utils;
-/*
- *   Mersenne Twister Random algorithm
+
+/**
+ * Mersenne Twister random number generator implementation.
+ *
+ * <p>
+ * This class provides methods to generate random numbers using the Mersenne Twister algorithm,
+ * which is known for its high-quality random number generation and long period (2^19937 − 1).
+ * </p>
+ *
+ * <strong>Features:</strong>
+ * <ul>
+ *   <li>Seeded initialization for reproducible sequences.</li>
+ *   <li>Support for generating random integers, doubles, and numbers within specific ranges.</li>
+ * </ul>
+ *
+ * <strong>Usage Example:</strong>
+ * <pre>
+ * OneBlockRandom random = new OneBlockRandom(12345); // Initialize with a seed
+ * int randomInt = random.nextInt();                // Generate a random integer
+ * double randomDouble = random.nextDouble();       // Generate a random double in [0, 1)
+ * int boundedInt = random.nextIntInRange(10, 50);  // Generate a random integer in [10, 50)
+ * </pre>
  */
+
 public class OneBlockRandom {
+
     private static final int N = 624;
     private static final int M = 397;
-    private static final int MATRIX_A = 0x9908b0df;   // Constant vector a
+    private static final int MATRIX_A = 0x9908b0df;   // Constant vector 'a'
     private static final int UPPER_MASK = 0x80000000; // Most significant w-r bits
     private static final int LOWER_MASK = 0x7fffffff; // Least significant r bits
 
-    private final int[] mt = new int[N]; // The array for the state vector
-    private int mti = N + 1;             // mti == N+1 means mt[N] is not initialized
+    private final int[] mt = new int[N]; // The state vector
+    private int mti = N + 1;             // mti == N+1 indicates uninitialized state vector
 
-    // Constructor to initialize with a seed
+    /**
+     * Constructs a new instance of {@code OneBlockRandom} with a default seed.
+     *
+     * <p>
+     * The default seed initializes the random number generator with a known value (5489),
+     * which ensures consistent behavior across different runs if the same seed is used.
+     * </p>
+     */
     public OneBlockRandom() {
         mt[0] = 5489;
         for (mti = 1; mti < N; mti++) {
             mt[mti] = (1812433253 * (mt[mti - 1] ^ (mt[mti - 1] >>> 30)) + mti);
-            mt[mti] &= 0xffffffff; // Ensure it's a 32-bit integer
+            mt[mti] &= 0xffffffff; // Ensure a 32-bit integer
         }
     }
+
+    /**
+     * Constructs a new instance of {@code OneBlockRandom} with a specific seed.
+     *
+     * <p>
+     * The seed determines the initial state of the generator, enabling reproducibility.
+     * </p>
+     *
+     * @param seed the seed value to initialize the random number generator
+     */
     public OneBlockRandom(int seed) {
         mt[0] = seed;
         for (mti = 1; mti < N; mti++) {
             mt[mti] = (1812433253 * (mt[mti - 1] ^ (mt[mti - 1] >>> 30)) + mti);
-            mt[mti] &= 0xffffffff; // Ensure it's a 32-bit integer
+            mt[mti] &= 0xffffffff; // Ensure a 32-bit integer
         }
     }
 
-    // Generate the next random number
+    /**
+     * Generates the next random integer.
+     *
+     * @return a randomly generated 32-bit signed integer
+     */
     public int nextInt() {
         int y;
         int[] mag01 = {0x0, MATRIX_A};
@@ -61,17 +104,33 @@ public class OneBlockRandom {
         return y;
     }
 
-    // Generate a random number in the range [0, max)
+    /**
+     * Generates a random integer within the range [0, max).
+     *
+     * @param max the upper bound (exclusive)
+     * @return a randomly generated integer in the range [0, max)
+     */
     public int nextInt(int max) {
         return Math.abs(nextInt() % max);
     }
 
-    // Generate a random double in the range [0, 1)
+    /**
+     * Generates a random double in the range [0, 1).
+     *
+     * @return a randomly generated double in the range [0, 1)
+     */
     public double nextDouble() {
-        return (nextInt() >>> 1) / ((double) (Integer.MAX_VALUE) + 1);
+        return (nextInt() >>> 1) / ((double) Integer.MAX_VALUE + 1);
     }
 
-    // Generate a random number in the range [min, max)
+    /**
+     * Generates a random integer within the specified range [min, max).
+     *
+     * @param min the lower bound (inclusive)
+     * @param max the upper bound (exclusive)
+     * @return a randomly generated integer in the range [min, max)
+     * @throws IllegalArgumentException if {@code max <= min}
+     */
     public int nextIntInRange(int min, int max) {
         if (min >= max) {
             throw new IllegalArgumentException("max must be greater than min");
