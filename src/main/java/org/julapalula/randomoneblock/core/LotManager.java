@@ -1,8 +1,8 @@
-package org.julapalula.oneblockplugin.core;
+package org.julapalula.randomoneblock.core;
 
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.playerinfo.PlayerData;
-import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
+import org.julapalula.randomoneblock.playerinfo.PlayerData;
+import org.julapalula.randomoneblock.playerinfo.PlayerUnwrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ import java.util.HashSet;
 
 public class LotManager {
     private Player player = null;
-    private OneBlockPlugin plugin = null;
+    private ROBPlugin plugin = null;
     private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(plugin);
 
     /**
@@ -47,7 +47,7 @@ public class LotManager {
      * @param player the player for whom the lots are being managed
      */
 
-    public LotManager(OneBlockPlugin plugin, Player player) {
+    public LotManager(ROBPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
     }

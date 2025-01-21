@@ -1,12 +1,13 @@
-package org.julapalula.oneblockplugin.core;
+package org.julapalula.randomoneblock.core;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.julapalula.oneblockplugin.playerinfo.PlayerData;
-import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
-import org.julapalula.oneblockplugin.utils.OneBlockRandom;
+import org.julapalula.randomoneblock.playerinfo.PlayerData;
+import org.julapalula.randomoneblock.playerinfo.PlayerUnwrapper;
+import org.julapalula.randomoneblock.utils.ROBRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,12 @@ import java.util.List;
  * </ul>
  */
 public class OneBlockTask {
-    private OneBlockPlugin plugin = null;
-    private final OneBlockRandom random = new OneBlockRandom(5489); //54
+    private ROBPlugin plugin = null;
+    private final ROBRandom random = new ROBRandom(
+            (int) (System.currentTimeMillis() % Integer.MAX_VALUE) +
+                    (int) (Runtime.getRuntime().freeMemory() % Integer.MAX_VALUE) +
+                    (int) (System.nanoTime() % Integer.MAX_VALUE)
+    );
     private BukkitRunnable task;
     private Player player = null;
     private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(plugin);
@@ -51,7 +56,7 @@ public class OneBlockTask {
      * @param plugin the instance of OneBlockPlugin
      * @param player the player for whom the task is being managed
      */
-    public OneBlockTask(OneBlockPlugin plugin, Player player) {
+    public OneBlockTask(ROBPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
     }
@@ -65,7 +70,7 @@ public class OneBlockTask {
      */
     public void startTask() {
         if (task != null) {
-            plugin.getLogger().info("Task is already running.");
+            //plugin.getLogger().info("Task is already running.");
             return; // Avoid starting the task again if it's already running
         }
 
@@ -92,9 +97,9 @@ public class OneBlockTask {
         if (task != null) {
             task.cancel();
             task = null; // Nullify the reference to allow restarting
-            plugin.getLogger().info("Task stopped!");
+            //plugin.getLogger().info("Task stopped!");
         } else {
-            plugin.getLogger().info("No task is running to stop.");
+            //plugin.getLogger().info("No task is running to stop.");
         }
     }
 
@@ -115,17 +120,16 @@ public class OneBlockTask {
 
         // Array of enabled lots
         ArrayList<Lot> array_enabled_lots = pld.getEnabledLots();
-        player.sendMessage("Size:" + array_enabled_lots.size());
 
         if (array_enabled_lots.isEmpty()) {
-            player.sendMessage("No enabled lots found. Cannot give a random item.");
+            player.sendMessage(ChatColor.YELLOW + "[ROB]"+ChatColor.RED+"No enabled lots found. Cannot give a random item.");
             return;
         }
         // We take the material list of a random enabled lot
         Lot randomLot = array_enabled_lots.get(random.nextIntInRange(0, array_enabled_lots.size()));
         List<Material> material_list = randomLot.getMaterials();
         if (material_list.isEmpty()) {
-            player.sendMessage("The selected lot has no materials. Cannot give a random item.");
+            player.sendMessage(ChatColor.YELLOW + "[ROB]"+ChatColor.RED+"The selected lot has no materials. Cannot give a random item.");
             return;
         }
 
@@ -134,7 +138,7 @@ public class OneBlockTask {
 
         // Check if the material is valid
         if (randomMaterial == null || !randomMaterial.isItem()) {
-            player.sendMessage("Failed to get a valid material. Cannot give a random item.");
+            player.sendMessage(ChatColor.YELLOW + "[ROB]"+ChatColor.RED+"Failed to get a valid material. Cannot give a random item.");
             return;
         }
 
@@ -143,6 +147,6 @@ public class OneBlockTask {
         player.getInventory().addItem(item);
 
         // Notify the player
-        player.sendMessage("You've received a random item: " + randomMaterial.name() + " from "+ randomLot.getLotName());
+        player.sendMessage(ChatColor.YELLOW + "[ROB]"+ChatColor.GREEN+"You've received a random item: " +ChatColor.DARK_RED+ randomMaterial.name() + ChatColor.GREEN +" from "+ ChatColor.GOLD+randomLot.getLotName());
     }
 }

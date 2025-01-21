@@ -1,12 +1,11 @@
-package org.julapalula.oneblockplugin.playerinfo;
+package org.julapalula.randomoneblock.playerinfo;
 
-import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.julapalula.oneblockplugin.core.Lot;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
-import org.julapalula.oneblockplugin.utils.OneBlockFileManagerUtil;
+import org.julapalula.randomoneblock.core.Lot;
+import org.julapalula.randomoneblock.core.ROBPlugin;
+import org.julapalula.randomoneblock.utils.ROBFileManagerUtil;
 
 import java.io.File;
 import java.io.FileReader;
@@ -14,12 +13,12 @@ import java.io.IOException;
 import java.util.*;
 
 public class PlayerUnwrapper {
-    OneBlockFileManagerUtil fileManager = new OneBlockFileManagerUtil();
+    ROBFileManagerUtil fileManager = new ROBFileManagerUtil();
     JSONParser parser = new JSONParser();
-    OneBlockPlugin plugin = null;
+    ROBPlugin plugin = null;
 
-    public PlayerUnwrapper(OneBlockPlugin plugin) {
-        this.plugin = plugin; //TODO: Pasar la arraylist (plugin)
+    public PlayerUnwrapper(ROBPlugin plugin) {
+        this.plugin = plugin;
     }
 
      /**
@@ -36,7 +35,7 @@ public class PlayerUnwrapper {
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".json") && !fileManager.hasSpecialCharacters(fileManager.getFileNameWithoutExtension(name)));
 
         if (files != null && files.length > 0) {
-            System.out.println("[OneBlockPlugin] Founded " + files.length + " players data.");
+            //System.out.println("[OneBlockPlugin] Founded " + files.length + " players data.");
             return Arrays.asList(files); // Convert the File[] array to a List<File>
         } else {
             System.out.println("[OneBlockPlugin] No players data files found in the directory: " + folder.getAbsolutePath());
@@ -57,9 +56,9 @@ public class PlayerUnwrapper {
         // Ensure the directory exists
         if (!folder.exists()) {
             if (folder.mkdirs()) {
-                System.out.println("[OneBlockPlugin] Directory created successfully at " + folder.getAbsolutePath());
+                //System.out.println("[OneBlockPlugin] Directory created successfully at " + folder.getAbsolutePath());
             } else {
-                System.out.println("[OneBlockPlugin] Failed to create directory at " + folder.getAbsolutePath());
+                //System.out.println("[OneBlockPlugin] Failed to create directory at " + folder.getAbsolutePath());
                 return null;
             }
         }
@@ -69,10 +68,10 @@ public class PlayerUnwrapper {
 
         // Check if the file exists
         if (targetFile.exists()) {
-            System.out.println("[OneBlockPlugin] Player data file found: " + targetFile.getAbsolutePath());
+            //System.out.println("[OneBlockPlugin] Player data file found: " + targetFile.getAbsolutePath());
             return targetFile;
         } else {
-            System.out.println("[OneBlockPlugin] No data file found for player UUID: " + player_UUID);
+            //System.out.println("[OneBlockPlugin] No data file found for player UUID: " + player_UUID);
             return null;
         }
     }
@@ -179,7 +178,7 @@ public class PlayerUnwrapper {
 
         // Log missing lots, if any
         if (!missingLots.isEmpty()) {
-            System.out.println("[OneBlockPlugin Error] Missing lots: " + missingLots + " for player "+ playerID+ ". Check typo and if that lots exists.");
+            //System.out.println("[OneBlockPlugin Error] Missing lots: " + missingLots + " for player "+ playerID+ ". Check typo and if that lots exists.");
             return null;
         }
 

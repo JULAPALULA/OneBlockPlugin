@@ -1,9 +1,9 @@
-name: OneBlockPlugin
+name: RandomOneBlockPlugin
 version: '${project.version}'
-main: org.julapalula.oneblockplugin.core.OneBlockPlugin
+main: org.julapalula.randomoneblock.core.ROBPlugin
 api-version: '1.21'
 load: STARTUP
-description: Test plugin
+description: Random item every minute!
 author: JULAPALULA
 commands:
   lot:

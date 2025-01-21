@@ -1,24 +1,24 @@
-package org.julapalula.oneblockplugin.commands.subcommands;
+package org.julapalula.randomoneblock.commands.subcommands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.commands.LotSubCommands;
-import org.julapalula.oneblockplugin.core.Lot;
-import org.julapalula.oneblockplugin.core.LotManager;
-import org.julapalula.oneblockplugin.playerinfo.PlayerData;
-import org.julapalula.oneblockplugin.playerinfo.PlayerManager;
-import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
+import org.julapalula.randomoneblock.commands.LotSubCommands;
+import org.julapalula.randomoneblock.core.Lot;
+import org.julapalula.randomoneblock.core.LotManager;
+import org.julapalula.randomoneblock.playerinfo.PlayerData;
+import org.julapalula.randomoneblock.playerinfo.PlayerManager;
+import org.julapalula.randomoneblock.playerinfo.PlayerUnwrapper;
+import org.julapalula.randomoneblock.core.ROBPlugin;
 
 import java.util.ArrayList;
 
 public class LotBuyCommand implements LotSubCommands {
 
-    private  OneBlockPlugin plugin = null;
+    private ROBPlugin plugin = null;
     private final PlayerUnwrapper playerUnwrapper = new PlayerUnwrapper(plugin);
     private final PlayerManager playerManager = new PlayerManager();
 
-    public LotBuyCommand(OneBlockPlugin plugin) {
+    public LotBuyCommand(ROBPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -62,7 +62,7 @@ public class LotBuyCommand implements LotSubCommands {
         playerManager.addLotPool(player, lotToBuy.getLotName());
 
         //Provide feedback to the player
-        player.sendMessage(ChatColor.GREEN + "You have successfully bought the lot: " + ChatColor.YELLOW + lotName);
+        player.sendMessage(ChatColor.YELLOW + "[ROB]"+ChatColor.GREEN + "You have successfully bought the lot: " + ChatColor.YELLOW + lotName);
 
         return true;
     }

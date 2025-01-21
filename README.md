@@ -8,7 +8,7 @@ This Minecraft plugin allows administrators to create lots filled with specific 
 - **Lot Purchase by Players:** Players can buy lots, gaining access to the materials within.
 - **Enable Lots After Purchase:** Once a lot is bought, players can enable it in their pool.
 - **Random Item Distribution:** Every minute, players will receive a random item from their enabled lot, offering an element of luck and surprise.
-- **Interactive Gameplay:** Players must place blocks to gather materials, adding a fun and engaging challenge to the experience.
+- **Interactive Gameplay:** Players must place blocks to gather score, which allows players to buy lots.
 
 This plugin is perfect for adding a new layer of interactivity and luck to your server, where players can test their fortune while collecting valuable items from lots they own.
 ## License
@@ -22,6 +22,7 @@ This software is licensed under a modified MIT License.
 ## Usage
 
 ### Available Commands:
+- `/lot` - Opens lot menu.
 - `/lot help` - Display this help message.
 - `/lot show <lot name>` - Show details of a specific lot.
 - `/lot list` - List all lots and their status.
@@ -46,7 +47,10 @@ This software is licensed under a modified MIT License.
     }
     ```
 
-Material names can be found here: [Bukkit Material Documentation](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html).
+First time opening the server with the plugin will create a free lot called "all.lot.json", with all items and blocks allowed of Minecraft version 1.21.1.
+If you want to create a new lot with specific materials, names can be found here: [Bukkit Material Documentation](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html).
+
+Also for better experience, is recommended to use [Sky Void World Gen](https://modrinth.com/datapack/skyblock-void-worldgen/version/2.0.2) to make the survival experience even harder!
 
 ---
 

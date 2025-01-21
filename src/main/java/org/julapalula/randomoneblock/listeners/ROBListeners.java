@@ -1,28 +1,27 @@
-package org.julapalula.oneblockplugin.listeners;
-import org.bukkit.ChatColor;
+package org.julapalula.randomoneblock.listeners;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.julapalula.oneblockplugin.core.Lot;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
-import org.julapalula.oneblockplugin.core.OneBlockTask;
-import org.julapalula.oneblockplugin.playerinfo.PlayerData;
-import org.julapalula.oneblockplugin.playerinfo.PlayerManager;
-import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
+import org.julapalula.randomoneblock.core.Lot;
+import org.julapalula.randomoneblock.core.ROBPlugin;
+import org.julapalula.randomoneblock.core.OneBlockTask;
+import org.julapalula.randomoneblock.playerinfo.PlayerData;
+import org.julapalula.randomoneblock.playerinfo.PlayerManager;
+import org.julapalula.randomoneblock.playerinfo.PlayerUnwrapper;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class OneBlockListeners implements Listener {
+public class ROBListeners implements Listener {
     private final PlayerManager player_manager = new PlayerManager();
-    private OneBlockPlugin oneBlockPlugin = null;
-    private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(oneBlockPlugin);
+    private ROBPlugin ROBPlugin = null;
+    private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(ROBPlugin);
 
-    public OneBlockListeners(OneBlockPlugin oneBlockPlugin) {
-        this.oneBlockPlugin = oneBlockPlugin;
+    public ROBListeners(ROBPlugin ROBPlugin) {
+        this.ROBPlugin = ROBPlugin;
     }
 
     @EventHandler
@@ -32,8 +31,8 @@ public class OneBlockListeners implements Listener {
 
         //Checks if player has enabled_lots
         if(hasPlayerEnabledLots(player)) {
-            OneBlockTask obt = new OneBlockTask(oneBlockPlugin, player);
-            oneBlockPlugin.setOneBlockTask(obt);
+            OneBlockTask obt = new OneBlockTask(ROBPlugin, player);
+            ROBPlugin.setOneBlockTask(obt);
             //--- We start the task if has enabled lots when enter server
             obt.startTask();
         }
@@ -43,7 +42,7 @@ public class OneBlockListeners implements Listener {
         Player player = event.getPlayer();
         // Handle player quit event
         if(hasPlayerEnabledLots(player)) {
-            OneBlockTask obt = oneBlockPlugin.getOneBlockTask();
+            OneBlockTask obt = ROBPlugin.getOneBlockTask();
             obt.stopTask();
         }
     }

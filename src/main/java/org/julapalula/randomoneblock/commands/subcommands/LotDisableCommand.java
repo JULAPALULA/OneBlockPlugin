@@ -1,23 +1,23 @@
-package org.julapalula.oneblockplugin.commands.subcommands;
+package org.julapalula.randomoneblock.commands.subcommands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.commands.LotSubCommands;
-import org.julapalula.oneblockplugin.core.Lot;
-import org.julapalula.oneblockplugin.core.LotManager;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
-import org.julapalula.oneblockplugin.core.OneBlockTask;
-import org.julapalula.oneblockplugin.playerinfo.PlayerData;
-import org.julapalula.oneblockplugin.playerinfo.PlayerManager;
-import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
+import org.julapalula.randomoneblock.commands.LotSubCommands;
+import org.julapalula.randomoneblock.core.Lot;
+import org.julapalula.randomoneblock.core.LotManager;
+import org.julapalula.randomoneblock.core.ROBPlugin;
+import org.julapalula.randomoneblock.core.OneBlockTask;
+import org.julapalula.randomoneblock.playerinfo.PlayerData;
+import org.julapalula.randomoneblock.playerinfo.PlayerManager;
+import org.julapalula.randomoneblock.playerinfo.PlayerUnwrapper;
 
 public class LotDisableCommand implements LotSubCommands {
 
-    private  OneBlockPlugin plugin = null;
+    private ROBPlugin plugin = null;
     private final PlayerManager playerManager = new PlayerManager();
     private final PlayerUnwrapper playerUnwrapper = new PlayerUnwrapper(plugin);
 
-    public LotDisableCommand(OneBlockPlugin plugin) {
+    public LotDisableCommand(ROBPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -62,7 +62,7 @@ public class LotDisableCommand implements LotSubCommands {
         }
 
         //Provide feedback to the player
-        player.sendMessage(ChatColor.GREEN + "You have successfully disabled the lot: " + ChatColor.YELLOW + lotName);
+        player.sendMessage(ChatColor.YELLOW + "[ROB]"+ChatColor.GREEN + "You have successfully disabled the lot: " + ChatColor.YELLOW + lotName);
 
         return true;
     }

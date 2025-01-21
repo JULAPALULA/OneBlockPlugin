@@ -1,4 +1,4 @@
-package org.julapalula.oneblockplugin.core;
+package org.julapalula.randomoneblock.core;
 
 import org.bukkit.Material;
 

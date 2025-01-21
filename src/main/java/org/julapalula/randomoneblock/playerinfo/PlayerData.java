@@ -1,5 +1,5 @@
-package org.julapalula.oneblockplugin.playerinfo;
-import org.julapalula.oneblockplugin.core.Lot;
+package org.julapalula.randomoneblock.playerinfo;
+import org.julapalula.randomoneblock.core.Lot;
 
 import java.util.ArrayList;
 

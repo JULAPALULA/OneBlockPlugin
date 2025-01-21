@@ -1,19 +1,17 @@
-package org.julapalula.oneblockplugin.commands.subcommands;
+package org.julapalula.randomoneblock.commands.subcommands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.commands.LotSubCommands;
-import org.julapalula.oneblockplugin.core.Lot;
-import org.julapalula.oneblockplugin.core.LotManager;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
-
-import java.util.ArrayList;
+import org.julapalula.randomoneblock.commands.LotSubCommands;
+import org.julapalula.randomoneblock.core.Lot;
+import org.julapalula.randomoneblock.core.LotManager;
+import org.julapalula.randomoneblock.core.ROBPlugin;
 
 public class LotListCommand implements LotSubCommands {
 
-    private final OneBlockPlugin plugin;
+    private final ROBPlugin plugin;
 
-    public LotListCommand(OneBlockPlugin plugin) {
+    public LotListCommand(ROBPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -21,7 +19,7 @@ public class LotListCommand implements LotSubCommands {
     public boolean execute(Player player, String[] args) {
         LotManager lm = new LotManager(plugin, player);
 
-        player.sendMessage(ChatColor.YELLOW + "[OneBlock] Lot server list: ");
+        player.sendMessage(ChatColor.YELLOW + "[ROB] Lot server list: ");
 
         // Iterate through all lots in the server
         for (Lot lot : plugin.arrayLot) {

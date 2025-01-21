@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.julapalula</groupId>
-  <artifactId>OneBlockPlugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <artifactId>Random-One-Block-Plugin</artifactId>
+  <version>1.0</version>
   <packaging>jar</packaging>
 
-  <name>OneBlock Plugin</name>
+  <name>Random-One-Block-Plugin</name>
 
   <properties>
     <java.version>1.8</java.version>

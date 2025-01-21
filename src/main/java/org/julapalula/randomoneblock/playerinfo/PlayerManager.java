@@ -1,16 +1,12 @@
-package org.julapalula.oneblockplugin.playerinfo;
+package org.julapalula.randomoneblock.playerinfo;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 /**
  * Manages player-specific data for the OneBlockPlugin.
@@ -66,9 +62,9 @@ public class PlayerManager {
         // Write the JSON string to the file
         try (FileWriter writer = new FileWriter(playerFile)) {
             writer.write(jsonBuilder.toString());
-            System.out.println("[OneBlockPlugin]Player data written to file: " + playerFile.getAbsolutePath());
+            //System.out.println("[OneBlockPlugin]Player data written to file: " + playerFile.getAbsolutePath());
         } catch (IOException e) {
-            System.out.println("[OneBlockPlugin]Failed to write player data: " + e.getMessage());
+            //System.out.println("[OneBlockPlugin]Failed to write player data: " + e.getMessage());
         }
     }
 
@@ -83,9 +79,9 @@ public class PlayerManager {
         File directory = new File(dir);
         if (!directory.exists()) {
             if (directory.mkdirs()) {
-                System.out.println("[OneBlockPlugin]Directory created: " + dir);
+                //System.out.println("[OneBlockPlugin]Directory created: " + dir);
             } else {
-                System.out.println("[OneBlockPlugin]Failed to create directory: " + dir);
+                //System.out.println("[OneBlockPlugin]Failed to create directory: " + dir);
                 return;
             }
         }
@@ -120,7 +116,7 @@ public class PlayerManager {
         File playerFile = new File(dir, playerUUID + ".json");
 
         if (!playerFile.exists()) {
-            System.out.println("[OneBlockPlugin] Player data file not found for UUID: " + playerUUID);
+            //System.out.println("[OneBlockPlugin] Player data file not found for UUID: " + playerUUID);
             return;
         }
 
@@ -137,7 +133,7 @@ public class PlayerManager {
             // Write the updated data back to the file
             try (FileWriter writer = new FileWriter(playerFile)) {
                 writer.write(playerData.toString());
-                System.out.println("[OneBlockPlugin] Player score updated to " + newScore + " for UUID: " + playerUUID);
+                //System.out.println("[OneBlockPlugin] Player score updated to " + newScore + " for UUID: " + playerUUID);
             }
         } catch (IOException e) {
             System.out.println("[OneBlockPlugin] Failed to rewrite player score: " + e.getMessage());
@@ -200,7 +196,7 @@ public class PlayerManager {
         File playerFile = new File(dir, playerUUID + ".json");
 
         if (!playerFile.exists()) {
-            System.out.println("[OneBlockPlugin] Player data file not found for UUID: " + playerUUID);
+            //System.out.println("[OneBlockPlugin] Player data file not found for UUID: " + playerUUID);
             return;
         }
 
@@ -226,9 +222,9 @@ public class PlayerManager {
                 JsonElement lotNameElement = new JsonParser().parse(lotName);
                 if (!JSONLotArray.contains(lotNameElement)) {
                     JSONLotArray.add(lotName);
-                    System.out.println("[OneBlockPlugin] Lot " + lotName + " added for player " + player.getName());
+                   // System.out.println("[OneBlockPlugin] Lot " + lotName + " added for player " + player.getName());
                 } else {
-                    System.out.println("[OneBlockPlugin] Lot " + lotName + " is already enabled for player " + player.getName());
+                    //System.out.println("[OneBlockPlugin] Lot " + lotName + " is already enabled for player " + player.getName());
                 }
             } else {
                 // Remove the lot if it exists in the list
@@ -242,9 +238,9 @@ public class PlayerManager {
                 }
 
                 if (removed) {
-                    System.out.println("[OneBlockPlugin] Lot " + lotName + " removed for player " + player.getName());
+                    //System.out.println("[OneBlockPlugin] Lot " + lotName + " removed for player " + player.getName());
                 } else {
-                    System.out.println("[OneBlockPlugin] Lot " + lotName + " not found for player " + player.getName());
+                    //System.out.println("[OneBlockPlugin] Lot " + lotName + " not found for player " + player.getName());
                 }
             }
 

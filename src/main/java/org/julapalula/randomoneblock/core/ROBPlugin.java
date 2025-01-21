@@ -1,26 +1,24 @@
-package org.julapalula.oneblockplugin.core;
-import org.bukkit.command.CommandExecutor;
+package org.julapalula.randomoneblock.core;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.julapalula.oneblockplugin.commands.OneBlockCommands;
-import org.julapalula.oneblockplugin.listeners.OneBlockListeners;
-import org.julapalula.oneblockplugin.playerinfo.PlayerData;
-import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
+import org.julapalula.randomoneblock.commands.ROBCommands;
+import org.julapalula.randomoneblock.listeners.ROBListeners;
+import org.julapalula.randomoneblock.tabs.LotTabCompleter;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public final class OneBlockPlugin extends JavaPlugin {
+public final class ROBPlugin extends JavaPlugin {
     private final Logger logger = getLogger();
     public static ArrayList<Lot> arrayLot = new ArrayList<Lot>();
     public static OneBlockTask oneBlockTask = null;
 
     @Override
     public void onEnable() {
-        logger.info("OneBlock Plugin (JULAPALULA) has been Enabled!");
-        // --- Unwrap lots
-        logger.info("OneBlock Plugin (JULAPALULA) starting to unwrapping lots!");
-        OneBlockMaterialUnwrapper unwrapper = new OneBlockMaterialUnwrapper();
+        logger.info("Random One Block Plugin (JULAPALULA) has been Enabled!");
+        // --- Unwrap lots-
+        logger.info("Random One Block Plugin (JULAPALULA) starting to unwrapping lots!");
+        ROBMaterialUnwrapper unwrapper = new ROBMaterialUnwrapper();
         arrayLot = unwrapper.loadLots("one_block_data/lots");
 
         //Checks if it's empty
@@ -30,7 +28,7 @@ public final class OneBlockPlugin extends JavaPlugin {
             return;
         }
 
-        logger.info("OneBlock Plugin (JULAPALULA) Unwrapping process finished with " + arrayLot.size()+ " lot(s) loaded!");
+        logger.info("Random One Block Plugin (JULAPALULA) Unwrapping process finished with " + arrayLot.size()+ " lot(s) loaded!");
 
         for (Lot lot: arrayLot){
             logger.info("Lot "+ lot.getLotName() +" successfully loaded.");
@@ -42,13 +40,15 @@ public final class OneBlockPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        logger.info("OneBlock Plugin (JULAPALULA) has been Disabled!");
+        logger.info("Random One Block Plugin (JULAPALULA) has been Disabled!");
     }
     private void loadCommands() {
-        getCommand("lot").setExecutor(new OneBlockCommands(this));
+        getCommand("lot").setExecutor(new ROBCommands(this));
+        // Register tab completer
+        getCommand("lot").setTabCompleter(new LotTabCompleter());
     }
     private void registerListeners() {
-       getServer().getPluginManager().registerEvents(new OneBlockListeners(this), this);
+       getServer().getPluginManager().registerEvents(new ROBListeners(this), this);
     }
 
     /* Getters and setters */

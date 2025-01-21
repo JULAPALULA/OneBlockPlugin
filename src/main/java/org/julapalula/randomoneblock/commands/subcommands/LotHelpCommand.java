@@ -1,13 +1,14 @@
-package org.julapalula.oneblockplugin.commands.subcommands;
+package org.julapalula.randomoneblock.commands.subcommands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.commands.LotSubCommands;
-import org.julapalula.oneblockplugin.core.OneBlockTask;
+import org.julapalula.randomoneblock.commands.LotSubCommands;
 
 public class LotHelpCommand implements LotSubCommands {
     @Override
     public boolean execute(Player player, String[] args) {
-        player.sendMessage("[OneBlock] Available commands:");
+        player.sendMessage(ChatColor.YELLOW +"[ROB] Available commands:");
+        player.sendMessage("/lot - Opens overall menu.");
         player.sendMessage("/lot help - Display this help message.");
         player.sendMessage("/lot show <lot name> - Show details of a lot.");
         player.sendMessage("/lot list - List all lots and status.");

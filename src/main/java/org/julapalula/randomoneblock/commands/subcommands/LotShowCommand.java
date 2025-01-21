@@ -1,20 +1,20 @@
-package org.julapalula.oneblockplugin.commands.subcommands;
+package org.julapalula.randomoneblock.commands.subcommands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.commands.LotSubCommands;
-import org.julapalula.oneblockplugin.core.Lot;
-import org.julapalula.oneblockplugin.core.LotManager;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
+import org.julapalula.randomoneblock.commands.LotSubCommands;
+import org.julapalula.randomoneblock.core.Lot;
+import org.julapalula.randomoneblock.core.LotManager;
+import org.julapalula.randomoneblock.core.ROBPlugin;
 
 import java.util.List;
 
 public class LotShowCommand implements LotSubCommands {
 
-    private OneBlockPlugin plugin = null;
+    private ROBPlugin plugin = null;
 
-    public LotShowCommand(OneBlockPlugin plugin) {
+    public LotShowCommand(ROBPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -23,7 +23,7 @@ public class LotShowCommand implements LotSubCommands {
         LotManager lm = new LotManager(plugin, player);
 
         if (args.length < 2) {
-            player.sendMessage(ChatColor.RED + "[OneBlock] Usage: /lot show <lot name>");
+            player.sendMessage(ChatColor.RED + "[ROB] Usage: /lot show <lot name>");
             return true;
         }
 
@@ -32,12 +32,12 @@ public class LotShowCommand implements LotSubCommands {
         player.sendMessage(lotName);
 
         if (lot == null) {
-            player.sendMessage(ChatColor.RED + "[OneBlock] Lot '" + lotName + "' not found!");
+            player.sendMessage(ChatColor.RED + "[ROB] Lot '" + lotName + "' not found!");
             return true;
         }
 
         // Display details about the lot
-        player.sendMessage(ChatColor.YELLOW + "[OneBlock] Details for lot: " + ChatColor.GREEN + lotName);
+        player.sendMessage(ChatColor.YELLOW + "[ROB] Details for lot: " + ChatColor.GREEN + lotName);
         //Status
         boolean isLotBought =lm.isLotBought(lotName);
         if(isLotBought) {
@@ -57,10 +57,10 @@ public class LotShowCommand implements LotSubCommands {
 
         player.sendMessage(ChatColor.GOLD + "This lot contains: ");
         List<Material> lot_materials = lot.getMaterials();
-        int chancePerMaterial = (!lot_materials.isEmpty()) ? 100 / lot_materials.size() : 0;
+        float chancePerMaterial = (!lot_materials.isEmpty()) ? (float) 100 / lot_materials.size() : 0;
 
         for (Material material : lot_materials) {
-            player.sendMessage(String.format(ChatColor.GOLD + "- %s (Chance: %s%d%%%s)", material.name(), ChatColor.DARK_RED, chancePerMaterial,ChatColor.GOLD));
+            player.sendMessage(String.format(ChatColor.GOLD + "- %s (Chance: %s%.2f%%%s)", material.name(), ChatColor.DARK_RED, chancePerMaterial,ChatColor.GOLD));
         }
         return true;
     }

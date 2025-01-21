@@ -1,8 +1,6 @@
-package org.julapalula.oneblockplugin.utils;
+package org.julapalula.randomoneblock.utils;
 
-import java.io.File;
-
-public class OneBlockFileManagerUtil {
+public class ROBFileManagerUtil {
 
     /**
      * Extracts the file name without the extension from a given file name.

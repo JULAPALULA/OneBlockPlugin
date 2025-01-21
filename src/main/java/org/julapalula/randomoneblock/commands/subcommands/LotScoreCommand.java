@@ -1,21 +1,21 @@
-package org.julapalula.oneblockplugin.commands.subcommands;
+package org.julapalula.randomoneblock.commands.subcommands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.julapalula.oneblockplugin.commands.LotSubCommands;
-import org.julapalula.oneblockplugin.core.Lot;
-import org.julapalula.oneblockplugin.core.LotManager;
-import org.julapalula.oneblockplugin.core.OneBlockPlugin;
-import org.julapalula.oneblockplugin.playerinfo.PlayerData;
-import org.julapalula.oneblockplugin.playerinfo.PlayerUnwrapper;
+import org.julapalula.randomoneblock.commands.LotSubCommands;
+import org.julapalula.randomoneblock.core.Lot;
+import org.julapalula.randomoneblock.core.LotManager;
+import org.julapalula.randomoneblock.core.ROBPlugin;
+import org.julapalula.randomoneblock.playerinfo.PlayerData;
+import org.julapalula.randomoneblock.playerinfo.PlayerUnwrapper;
 
 import java.util.ArrayList;
 
 public class LotScoreCommand implements LotSubCommands {
-    private OneBlockPlugin plugin = null;
+    private ROBPlugin plugin = null;
     private final PlayerUnwrapper player_unwrapper = new PlayerUnwrapper(plugin);
 
-    public LotScoreCommand(OneBlockPlugin plugin) {
+    public LotScoreCommand(ROBPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -23,7 +23,7 @@ public class LotScoreCommand implements LotSubCommands {
     public boolean execute(Player player, String[] args) {
         LotManager lm = new LotManager(plugin, player);
         PlayerData pld = player_unwrapper.loadSinglePlayerData(player.getUniqueId());
-        player.sendMessage(ChatColor.YELLOW + "[OneBlock] Stats for player: " + ChatColor.GREEN + player.getName());
+        player.sendMessage(ChatColor.YELLOW + "[ROB] Stats for player: " + ChatColor.GREEN + player.getName());
         player.sendMessage(ChatColor.GOLD + "Total score: " + ChatColor.GREEN + pld.getScore());
 
         // Retrieve enabled lots

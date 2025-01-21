@@ -1,4 +1,4 @@
-package org.julapalula.oneblockplugin.utils;
+package org.julapalula.randomoneblock.utils;
 
 /**
  * Mersenne Twister random number generator implementation.
@@ -23,7 +23,7 @@ package org.julapalula.oneblockplugin.utils;
  * </pre>
  */
 
-public class OneBlockRandom {
+public class ROBRandom {
 
     private static final int N = 624;
     private static final int M = 397;
@@ -42,7 +42,7 @@ public class OneBlockRandom {
      * which ensures consistent behavior across different runs if the same seed is used.
      * </p>
      */
-    public OneBlockRandom() {
+    public ROBRandom() {
         mt[0] = 5489;
         for (mti = 1; mti < N; mti++) {
             mt[mti] = (1812433253 * (mt[mti - 1] ^ (mt[mti - 1] >>> 30)) + mti);
@@ -59,7 +59,7 @@ public class OneBlockRandom {
      *
      * @param seed the seed value to initialize the random number generator
      */
-    public OneBlockRandom(int seed) {
+    public ROBRandom(int seed) {
         mt[0] = seed;
         for (mti = 1; mti < N; mti++) {
             mt[mti] = (1812433253 * (mt[mti - 1] ^ (mt[mti - 1] >>> 30)) + mti);

@@ -1,7 +1,9 @@
-package org.julapalula.oneblockplugin.core;
+package org.julapalula.randomoneblock.core;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
-import org.julapalula.oneblockplugin.utils.OneBlockFileManagerUtil;
+import org.julapalula.randomoneblock.utils.ROBFileManagerUtil;
+
+import java.io.FileWriter;
 import java.util.Arrays;
 
 import java.io.File;
@@ -12,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A utility class for handling `.lot.json` files.
@@ -30,6 +33,7 @@ import java.util.List;
  * The class ensures that:
  * <ul>
  *   <li>Directories are created if they do not exist.</li>
+ *   <li>Creates a example .lot.json if don't have any.</li>
  *   <li>Files with invalid material names or scores are omitted with appropriate logging.</li>
  *   <li>Special characters in file names are avoided.</li>
  * </ul>
@@ -51,8 +55,8 @@ import java.util.List;
  *
  */
 
-public class OneBlockMaterialUnwrapper implements Listener {
-    OneBlockFileManagerUtil fileManager = new OneBlockFileManagerUtil();
+public class ROBMaterialUnwrapper implements Listener {
+    ROBFileManagerUtil fileManager = new ROBFileManagerUtil();
     JSONParser parser = new JSONParser();
 
     /**
@@ -68,9 +72,9 @@ public class OneBlockMaterialUnwrapper implements Listener {
         // Check if the folder exists
         if (!folder.exists()) {
             if (folder.mkdirs()) {
-                System.out.println("[OneBlockPlugin] lots folder created with success in "+ folder.getAbsolutePath() +".");
+                System.out.println("[ROB] lots folder created with success in "+ folder.getAbsolutePath() +".");
             } else {
-                System.out.println("[OneBlockPlugin] Failed to create lots directory.");
+                System.out.println("[ROB] Failed to create lots directory.");
                 return new ArrayList<>();
             }
         }
@@ -79,11 +83,17 @@ public class OneBlockMaterialUnwrapper implements Listener {
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".lot.json") && !fileManager.hasSpecialCharacters(fileManager.getFileNameWithoutExtension(name)));
 
         if (files != null && files.length > 0) {
-            System.out.println("[OneBlockPlugin] Founded " + files.length + " lots.");
+            System.out.println("[ROB] Founded " + files.length + " lots.");
             return Arrays.asList(files); // Convert the File[] array to a List<File>
         } else {
-            System.out.println("[OneBlockPlugin] No .lot.json files found in the directory: " + folder.getAbsolutePath());
-            return new ArrayList<>(); // Return an empty list if no files are found
+            System.out.println("[ROB] No .lot.json files found in the directory: " + folder.getAbsolutePath());
+            System.out.println("[ROB] Creating all.lot.json " + folder.getAbsolutePath());
+            //Creates a all lot (dummy example)
+            createDummyLotJson(directoryPath);
+            //Retry to get the files
+            files = folder.listFiles((dir, name) -> name.endsWith(".lot.json") && !fileManager.hasSpecialCharacters(fileManager.getFileNameWithoutExtension(name)));
+
+            return Arrays.asList(files); // Return an empty list if no files are found
         }
     }
 
@@ -111,7 +121,7 @@ public class OneBlockMaterialUnwrapper implements Listener {
             int materialScore = ((Long) jsonObject.get("score")).intValue();
             //Checks if the actual score is not negative
             if(materialScore < 0) {
-                System.err.println("[OneBlockPlugin Lod Error] Invalid negative score from " + fileManager.getFileNameWithoutExtension(file.getName()) + ".This lot will be omitted.");
+                System.err.println("[ROB Lod Error] Invalid negative score from " + fileManager.getFileNameWithoutExtension(file.getName()) + ".This lot will be omitted.");
                 return null;
             }
             lot.setScore(materialScore); //set score to lod
@@ -123,12 +133,12 @@ public class OneBlockMaterialUnwrapper implements Listener {
                     materials.add(material);  // Valid material name, add to the list
                 } else {
                     isLodValid = false;
-                    System.err.println("[OneBlockPlugin Lod Error] Invalid material name: " + materialName + " from " + fileManager.getFileNameWithoutExtension(file.getName()));
+                    System.err.println("[ROB Lod Error] Invalid material name: " + materialName + " from " + fileManager.getFileNameWithoutExtension(file.getName()));
                 }
             }
 
             if(!isLodValid) { //In case is not valid, we omit this lot
-                System.out.println("[OneBlockPlugin Lod Error] Check " + fileManager.getFileNameWithoutExtension(file.getName()) + " lot to resolve invalid material names. This lot will be omitted.");
+                System.out.println("[ROB Lod Error] Check " + fileManager.getFileNameWithoutExtension(file.getName()) + " lot to resolve invalid material names. This lot will be omitted.");
                 return null;
             }
 
@@ -161,6 +171,40 @@ public class OneBlockMaterialUnwrapper implements Listener {
             }
         }
         return lots;
+    }
+
+    /**
+    * Creates a dummy.lot.json for Minecraft version 1.21.1.
+    */
+
+    private void createDummyLotJson(String directoryPath) {
+        File dummyFile = new File(directoryPath, "all.lot.json");
+
+        if (!dummyFile.exists()) {
+            try {
+                JSONObject dummyJson = new JSONObject();
+                dummyJson.put("score", 0); // Add score to JSON object
+
+                // Get all material names
+                List<String> materialNames = Arrays.stream(Material.values())
+                        .map(Material::name)
+                        .collect(Collectors.toList());
+
+                // Add materials to JSON object
+                dummyJson.put("materials", materialNames);
+
+                // Write JSON to file
+                try (FileWriter writer = new FileWriter(dummyFile)) {
+                    writer.write(dummyJson.toString());
+                    System.out.println("[ROB] Created dummy lot file: " + dummyFile.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                System.err.println("[ROB Error] Failed to create dummy file: " + dummyFile.getName());
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("[ROB] Dummy file already exists: " + dummyFile.getAbsolutePath());
+        }
     }
 
 }
